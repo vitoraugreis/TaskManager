@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
 using System.Data;
 using System.Windows;
+using TaskManager.Data;
 
 namespace TaskManager;
 
@@ -9,5 +10,10 @@ namespace TaskManager;
 /// </summary>
 public partial class App : Application
 {
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
+        AppDbContext.EnsureDbCreated();
+    }
 }
 
