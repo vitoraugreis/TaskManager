@@ -17,14 +17,47 @@ namespace TaskManager.Views;
 /// </summary>
 public partial class MainWindow : Window
 {
+    private MainViewModel _viewModel;
     public MainWindow()
     {
         InitializeComponent();
-        var vm = new TestViewModel();
+        _viewModel = new MainViewModel();
+    }
 
-        vm.CriarUsuarioT();       // cria um usuário "Vitor"
-        vm.CriarTarefaT(1);       // tenta criar tarefa pro usuário com ID 1
-        var tarefas = vm.ObterTarefas(); // método que você vai criar no ViewModel
-        TaskListView.ItemsSource = tarefas;
+    private void NewTaskClick(object sender, RoutedEventArgs e)
+    {
+        string title = TitleTextBox.Text;
+        string? description = DescriptionTextBox.Text;
+        DateTime? dueDate = DueDatePicker.SelectedDate;
+
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            MessageBox.Show("O título da tarefa é obrigatório!");
+            return;
+        }
+
+        _viewModel.CreateTask(1, title, description, dueDate);
+
+        TaskListView.ItemsSource = null;
+        TaskListView.ItemsSource = _viewModel.GetTasksByUser(1);
+
+        TitleTextBox.Text = "";
+        DescriptionTextBox.Text = "";
+        DueDatePicker.SelectedDate = null;
+
+        MessageBox.Show("Tarefa criada com sucesso!");
+    }
+
+    private void NewUserClick(object sender, RoutedEventArgs e)
+    {
+        string name = UserNameTextBox.Text;
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            MessageBox.Show("O nome do usuário é obrigatório!");
+            return;
+        }
+
+        _viewModel.CreateUser(name);
+        MessageBox.Show("Usuário criado com sucesso!");
     }
 }

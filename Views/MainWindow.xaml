@@ -6,17 +6,37 @@
         xmlns:local="clr-namespace:TaskManager"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <ListView Name="TaskListView" Margin="10">
-        <ListView.View>
-            <GridView>
-				<GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}" Width="50"/>
-                <GridViewColumn Header="Título" DisplayMemberBinding="{Binding Title}" Width="150"/>
-                <GridViewColumn Header="Usuário" DisplayMemberBinding="{Binding User.Name}" Width="100"/>
-                <GridViewColumn Header="Descrição" DisplayMemberBinding="{Binding Description}" Width="200"/>
-                <GridViewColumn Header="Data de Criação" DisplayMemberBinding="{Binding CreationDate}" Width="150"/>
-				<GridViewColumn Header="Data de Conclusão" DisplayMemberBinding="{Binding CompletionDate}" Width="150"/>
-                <GridViewColumn Header="Concluída" DisplayMemberBinding="{Binding IsComplete}" Width="80"/>
-            </GridView>
-        </ListView.View>
-    </ListView>
+	
+	<Grid Margin="10">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<!-- Container geral -->
+        <StackPanel Orientation="Horizontal" Margin="0 0 0 10" HorizontalAlignment="Left" VerticalAlignment="Top">
+
+            <!-- Formulário de criar usuário -->
+            <StackPanel Orientation="Vertical" Margin="0 0 20 0">
+                <TextBlock Text="Criar Usuário" FontWeight="Bold" Margin="0 0 0 5"/>
+                <TextBox x:Name="UserNameTextBox" Width="200" Margin="0 5"/>
+                <Button Content="Criar Usuário" Width="150" Margin="0 5" Click="NewUserClick"/>
+            </StackPanel>
+
+            <!-- Formulário de criar tarefa -->
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Criar Tarefa" FontWeight="Bold" Margin="0 0 0 5"/>
+                <TextBox x:Name="TitleTextBox" Width="300" Margin="0 5"/>
+                <TextBox x:Name="DescriptionTextBox" Width="300" Margin="0 5"/>
+                <DatePicker x:Name="DueDatePicker" Width="300" Margin="0 5"/>
+                <Button Content="Criar Tarefa" Width="150" Margin="0 5" Click="NewTaskClick"/>
+            </StackPanel>
+
+        </StackPanel>
+
+
+
+		<!-- Lista de tarefas -->
+		<ListBox x:Name="TaskListView" Grid.Row="1" DisplayMemberPath="Title"/>
+	</Grid>
 </Window>

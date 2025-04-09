@@ -42,6 +42,12 @@ namespace TaskManager.ViewModels
             return context.Tasks.Include(t => t.User).ToList();
         }
 
+        public List<User> ObterUsuarios()
+        {
+            using var context = new AppDbContext();
+            return context.Users.ToList();
+        }
+
         public void LimparBanco()
         {
             using var context = new AppDbContext();
