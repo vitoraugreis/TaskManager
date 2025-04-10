@@ -17,5 +17,31 @@ namespace TaskManager.Data
             using var context = new AppDbContext();
             context.Database.EnsureCreated();
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Configura chave primária de User.
+            modelBuilder.Entity<User>()
+                .HasKey(u => u.Id);
+
+            // Configuração de Username (único e obrigatório)
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Username)
+                .IsRequired()
+                .HasMaxLength(20);
+
+            // Relacionamento entre User e UserTask (1:n)
+            modelBuilder.Entity<UserTask>()
+                .HasOne(t => t.User)
+                .WithMany(u => u.Tasks)
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
     }
 }
