@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET9_0;NETCOREAPP
 C:\Users\vitor\Documents\Projetos\TaskManager\App.xaml
-1-1644662438
+2144734613
 
-121788669208
+16556297658
 218-1977004464
-Views\MainWindow.xaml;
+Views\LoginWindow.xaml;Views\TaskViewWindow.xaml;
 
 False
 

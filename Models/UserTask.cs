@@ -10,7 +10,6 @@ namespace TaskManager.Models
         public DateTime CreationDate { get; set; }
         public DateTime? CompletionDate { get; set; }
         public bool IsComplete { get; set; }
-        public UserTask() { }
 
         public UserTask() { }
 

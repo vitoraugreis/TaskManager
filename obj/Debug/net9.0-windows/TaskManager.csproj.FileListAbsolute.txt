@@ -3,11 +3,9 @@ C:\Users\vitor\Documents\Projetos\TaskManager\bin\Debug\net9.0-windows\TaskManag
 C:\Users\vitor\Documents\Projetos\TaskManager\bin\Debug\net9.0-windows\TaskManager.runtimeconfig.json
 C:\Users\vitor\Documents\Projetos\TaskManager\bin\Debug\net9.0-windows\TaskManager.dll
 C:\Users\vitor\Documents\Projetos\TaskManager\bin\Debug\net9.0-windows\TaskManager.pdb
-C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\Views\MainWindow.g.cs
 C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\App.g.cs
 C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\TaskManager_MarkupCompile.cache
 C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\TaskManager_MarkupCompile.lref
-C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\Views\MainWindow.baml
 C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\TaskManager.g.resources
 C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\TaskManager.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\TaskManager.AssemblyInfoInputs.cache
@@ -141,3 +139,7 @@ C:\Users\vitor\Documents\Projetos\TaskManager\bin\Debug\net9.0-windows\runtimes\
 C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\TaskManager.csproj.AssemblyReference.cache
 C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\TaskManager.sourcelink.json
 C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\TaskMana.F3FB485A.Up2Date
+C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\Views\LoginWindow.g.cs
+C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\Views\TaskViewWindow.g.cs
+C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\Views\LoginWindow.baml
+C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\Views\TaskViewWindow.baml

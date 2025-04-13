@@ -1,0 +1,22 @@
+﻿<Window x:Class="TaskManager.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaskManager"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+	
+	<Grid x:Name="LoginGrid" Visibility="Visible" Margin="10">
+		<StackPanel>
+			<StackPanel Orientation="Horizontal" Margin="0 5" HorizontalAlignment="Center">
+				<TextBlock Text="Nome de Usuário:" VerticalAlignment="Center" Margin="0 0 10 0"/>
+				<TextBox x:Name="UsernameTextBox" Width="200"/>
+			</StackPanel>
+			<Button Content="Entrar" Width="200" Click="LoginClick" Margin="0 5"/>
+			<Button Content="Criar Usuário" Width="200" Click="CreateUserClick" Margin="0 5"/>
+			<TextBlock x:Name="LoginMessageTextBlock" Foreground="Red"/>
+		</StackPanel>
+	</Grid>
+
+</Window>
