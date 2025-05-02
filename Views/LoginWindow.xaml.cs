@@ -27,23 +27,22 @@ public partial class LoginWindow : Window
 
     private void LoginClick(object sender, RoutedEventArgs e)
     {
-        string username = UsernameTextBox.Text;
-        if (string.IsNullOrEmpty(username))
+        var username = UsernameTextBox.Text;
+        try
         {
-            MessageBox.Show("O campo de usuário está vazio.", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
+            var user = _viewModel.LoginUser(username);
+            var main = new TaskViewWindow(user);
+            main.Show();
+            this.Close();
         }
-        using var context = new AppDbContext();
-        var user = context.Users.FirstOrDefault(u => u.Username == username);
-        if (user == null)
+        catch (InvalidUsernameException ex)
         {
-            MessageBox.Show("Usuário não encontrado.", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
+            MessageBox.Show(ex.Message, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
         }
-
-        var main = new TaskViewWindow(user);
-        main.Show();
-        this.Close();
+        catch (UsernameNotExistException ex)
+        {
+            MessageBox.Show(ex.Message, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void CreateUserClick(object sender, RoutedEventArgs e)

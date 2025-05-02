@@ -22,5 +22,21 @@ namespace TaskManager.ViewModels
             context.Users.Add(newUser);
             context.SaveChanges();
         }
+
+        public User LoginUser(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+                throw new InvalidUsernameException("O campo de usuário está vazio.");
+            if (username.Contains(" "))
+                throw new InvalidUsernameException("O nome de usuário não pode conter espaços.");
+
+            username = username.ToLower();
+            using var context = new AppDbContext();
+            var user = context.Users.FirstOrDefault(u => u.Username == username);
+            if (user == null)
+                throw new UsernameNotExistException();
+
+            return user;
+        }
     }
 }
