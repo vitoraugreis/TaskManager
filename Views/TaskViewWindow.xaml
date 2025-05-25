@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Task Manager" Height="450" Width="800">
-
+	
 	<Grid Margin="10">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
@@ -58,20 +58,43 @@
 		</Border>
 
 		<ListBox x:Name="TasksListBox"
-                 Grid.Row="2"
-                 ItemsSource="{Binding Tasks}">
+         Grid.Row="2"
+         ItemsSource="{Binding Tasks}"
+         HorizontalContentAlignment="Stretch">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<StackPanel Orientation="Horizontal" Margin="0,5">
-						<CheckBox IsChecked="{Binding IsComplete}" Margin="0,0,10,0"/>
-						<StackPanel Orientation="Vertical">
-							<TextBlock Text="{Binding Title}" FontWeight="Bold"/>
-							<TextBlock Text="{Binding Description}"
-                                         FontStyle="Italic" Foreground="Gray" FontSize="12" TextWrapping="Wrap"/>
-							<TextBlock Text="{Binding CompletionDate, StringFormat=Concluir até: {0:dd/MM/yyyy}}"
-                                         FontSize="12"/>
+					<Grid HorizontalAlignment="Stretch">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+
+						<StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,5">
+							<CheckBox IsChecked="{Binding IsComplete}" Margin="0,0,10,0" VerticalAlignment="Center"/>
+							<StackPanel Orientation="Vertical">
+								<TextBlock Text="{Binding Title}" FontWeight="Bold"/>
+								<TextBlock Text="{Binding Description}"
+											 FontStyle="Italic" Foreground="Gray" FontSize="12" TextWrapping="Wrap" MaxWidth="600"/>
+								<TextBlock Text="{Binding CompletionDate, StringFormat=Concluir até: {0:dd/MM/yyyy}}"
+											 FontSize="12"/>
+							</StackPanel>
 						</StackPanel>
-					</StackPanel>
+
+						<Button Grid.Column="1"
+								Content="..."
+								VerticalAlignment="Center"
+								HorizontalAlignment="Right" Padding="8,2"
+								FontWeight="Bold"
+								Margin="5,0,0,0"
+								Click="TaskOptionsButton_Click">
+							<Button.ContextMenu>
+								<ContextMenu>
+									<MenuItem Header="Remover Tarefa"
+											  Click="RemoveTaskMenu_Click"/>
+								</ContextMenu>
+							</Button.ContextMenu>
+						</Button>
+					</Grid>
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>

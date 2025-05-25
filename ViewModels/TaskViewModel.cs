@@ -29,7 +29,6 @@ namespace TaskManager.ViewModels
 
         public void AddTask(string title, string? description = null, DateTime? completionDate = null)
         {
-
             using var context = new AppDbContext();
             var user = context.Users.First(u => u.Id == CurrentUser.Id);
             var newTask = new UserTask(user, title, description, completionDate);
@@ -38,6 +37,25 @@ namespace TaskManager.ViewModels
             context.SaveChanges();
 
             Tasks.Add(newTask);
+        }
+
+        public void RemoveTask(UserTask taskToRemove)
+        {
+            using var context = new AppDbContext();
+            var taskInDb = context.Tasks.Find(taskToRemove.Id);
+            var taskInCollection = Tasks.FirstOrDefault(t => t.Id == taskToRemove.Id);
+            if (taskInDb != null)
+            {
+                context.Tasks.Remove(taskInDb);
+                context.SaveChanges();
+                if (taskInCollection != null)
+                    Tasks.Remove(taskInCollection);
+            }
+            else
+            {
+                if (taskInCollection != null)
+                    Tasks.Remove(taskInCollection); ;
+            }
         }
     }
 }

@@ -72,5 +72,55 @@ public partial class TaskViewWindow : Window
         ClearNewTaskForm();
         NewTaskFormPanel.Visibility = Visibility.Collapsed;
     }
+
+    private void TaskOptionsButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button)
+        {
+            // Abre o ContextMenu associado ao botão
+            if (button.ContextMenu != null)
+            {
+                button.ContextMenu.PlacementTarget = button; // Define o botão como o alvo de posicionamento
+                button.ContextMenu.IsOpen = true;          // Abre o menu
+            }
+        }
+    }
+
+    private void RemoveTaskMenu_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuItem menuItem)
+        {
+            // O DataContext do MenuItem geralmente é herdado.
+            // Se não for direto, podemos pegá-lo do PlacementTarget do ContextMenu (que será o botão "...").
+            UserTask? taskToRemove = menuItem.DataContext as UserTask;
+
+            if (taskToRemove == null && menuItem.Parent is ContextMenu contextMenu && contextMenu.PlacementTarget is FrameworkElement placementTarget)
+            {
+                taskToRemove = placementTarget.DataContext as UserTask;
+            }
+
+            if (taskToRemove != null)
+            {
+                MessageBoxResult confirmation = MessageBox.Show(
+                    $"Tem certeza que deseja remover a tarefa: \"{taskToRemove.Title}\"?",
+                    "Confirmar Remoção",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (confirmation == MessageBoxResult.Yes)
+                {
+                    _viewModel.RemoveTask(taskToRemove); // Chama o método do ViewModel
+                }
+            }
+            else
+            {
+                MessageBox.Show("Não foi possível identificar a tarefa para remoção.", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                // Para depuração:
+                // var dc = menuItem.DataContext;
+                // var parentDc = (menuItem.Parent as ContextMenu)?.PlacementTarget?.DataContext;
+                // System.Diagnostics.Debug.WriteLine($"MenuItem DC: {dc}, PlacementTarget DC: {parentDc}");
+            }
+        }
+    }
 }
 

@@ -9,7 +9,7 @@ namespace TaskManager.Data
         public DbSet<User> Users { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source=Data/tasks.db");
+            optionsBuilder.UseSqlite("Data Source = Data/tasks.db");
         }
 
         public static void EnsureDbCreated()
