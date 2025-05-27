@@ -143,3 +143,5 @@ C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\Views\Log
 C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\Views\TaskViewWindow.g.cs
 C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\Views\LoginWindow.baml
 C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\Views\TaskViewWindow.baml
+C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\Views\EditTaskWindow.baml
+C:\Users\vitor\Documents\Projetos\TaskManager\obj\Debug\net9.0-windows\Views\EditTaskWindow.g.cs

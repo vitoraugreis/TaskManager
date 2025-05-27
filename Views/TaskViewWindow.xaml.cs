@@ -77,11 +77,10 @@ public partial class TaskViewWindow : Window
     {
         if (sender is Button button)
         {
-            // Abre o ContextMenu associado ao botão
             if (button.ContextMenu != null)
             {
-                button.ContextMenu.PlacementTarget = button; // Define o botão como o alvo de posicionamento
-                button.ContextMenu.IsOpen = true;          // Abre o menu
+                button.ContextMenu.PlacementTarget = button;
+                button.ContextMenu.IsOpen = true;
             }
         }
     }
@@ -90,8 +89,6 @@ public partial class TaskViewWindow : Window
     {
         if (sender is MenuItem menuItem)
         {
-            // O DataContext do MenuItem geralmente é herdado.
-            // Se não for direto, podemos pegá-lo do PlacementTarget do ContextMenu (que será o botão "...").
             UserTask? taskToRemove = menuItem.DataContext as UserTask;
 
             if (taskToRemove == null && menuItem.Parent is ContextMenu contextMenu && contextMenu.PlacementTarget is FrameworkElement placementTarget)
@@ -109,17 +106,47 @@ public partial class TaskViewWindow : Window
 
                 if (confirmation == MessageBoxResult.Yes)
                 {
-                    _viewModel.RemoveTask(taskToRemove); // Chama o método do ViewModel
+                    _viewModel.RemoveTask(taskToRemove);
                 }
             }
             else
             {
                 MessageBox.Show("Não foi possível identificar a tarefa para remoção.", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
-                // Para depuração:
-                // var dc = menuItem.DataContext;
-                // var parentDc = (menuItem.Parent as ContextMenu)?.PlacementTarget?.DataContext;
-                // System.Diagnostics.Debug.WriteLine($"MenuItem DC: {dc}, PlacementTarget DC: {parentDc}");
             }
+        }
+    }
+
+    private void EditTaskMenu_Click(object sender, RoutedEventArgs e)
+    {
+        UserTask? originalTask = null;
+        if (sender is MenuItem menuItem)
+        {
+            originalTask = menuItem.DataContext as UserTask;
+            if (originalTask == null && menuItem.Parent is ContextMenu contextMenu && contextMenu.PlacementTarget is FrameworkElement placementTarget)
+                originalTask = placementTarget.DataContext as UserTask;
+        }
+
+        if (originalTask != null)
+        {
+            UserTask taskClone = new UserTask(originalTask);
+
+            EditTaskWindow editWindow = new EditTaskWindow(taskClone);
+            editWindow.Owner = this; // Define a janela principal como "dona" da dialog
+
+            bool? dialogResult = editWindow.ShowDialog();
+
+            if (dialogResult == true)
+            {
+                // O usuário clicou em "Salvar".
+                originalTask.Title = taskClone.Title;
+                originalTask.Description = taskClone.Description;
+                originalTask.CompletionDate = taskClone.CompletionDate;
+                _viewModel.UpdateTask(originalTask);
+            }
+        }
+        else
+        {
+            MessageBox.Show("Não foi possível identificar a tarefa para edição.", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

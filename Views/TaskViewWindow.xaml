@@ -91,6 +91,8 @@
 								<ContextMenu>
 									<MenuItem Header="Remover Tarefa"
 											  Click="RemoveTaskMenu_Click"/>
+									<MenuItem Header="Editar Tarefa"
+											  Click="EditTaskMenu_Click"/>
 								</ContextMenu>
 							</Button.ContextMenu>
 						</Button>

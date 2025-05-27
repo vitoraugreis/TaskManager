@@ -57,5 +57,22 @@ namespace TaskManager.ViewModels
                     Tasks.Remove(taskInCollection); ;
             }
         }
+
+        public void UpdateTask(UserTask updatedTask)
+        {
+            if (updatedTask == null) return;
+
+            using var context = new AppDbContext();
+                // var existingTask = _dbContext.UserTasks.Find(updatedTask.Id);
+                // if (existingTask != null) {
+                //     _dbContext.Entry(existingTask).CurrentValues.SetValues(updatedTask);
+                // } else {
+                //    _dbContext.UserTasks.Update(updatedTask); // Ou _dbContext.Entry(updatedTask).State = EntityState.Modified;
+                // }
+                // Se 'updatedTask' é a mesma instância que está no DbContext e foi modificada pela UI,
+                // apenas SaveChanges() é necessário.
+
+            context.SaveChanges();
+        }
     }
 }
