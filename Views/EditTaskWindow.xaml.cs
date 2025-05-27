@@ -11,29 +11,73 @@ namespace TaskManager.Views // Ou o namespace correto
         public EditTaskWindow(UserTask taskToEdit)
         {
             InitializeComponent();
-            this.DataContext = taskToEdit; // Define o DataContext para a tarefa, os bindings no XAML funcionarão
+            this.DataContext = taskToEdit;
+
+            UserTask task = (UserTask)this.DataContext;
+            if (task.CompletionDate.HasValue)
+            {
+                CompletionDatePickerEdit.SelectedDate = task.CompletionDate.Value.Date;
+                HourTextBoxEdit.Text = task.CompletionDate.Value.Hour.ToString("D2"); // Formato "00"
+                MinuteTextBoxEdit.Text = task.CompletionDate.Value.Minute.ToString("D2"); // Formato "00"
+            }
+            else
+            {
+                HourTextBoxEdit.Text = "00"; // Valor padrão opcional
+                MinuteTextBoxEdit.Text = "00"; // Valor padrão opcional
+            }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            UserTask task = (UserTask)this.DataContext; // Pega a tarefa do DataContext
+            UserTask taskToSave = (UserTask)this.DataContext;
 
             // Validação básica (Título é obrigatório)
-            if (string.IsNullOrWhiteSpace(task.Title))
+            if (string.IsNullOrWhiteSpace(taskToSave.Title))
             {
                 MessageBox.Show("O título da tarefa é obrigatório.", "Validação", MessageBoxButton.OK, MessageBoxImage.Warning);
                 TitleTextBoxEdit.Focus();
                 return;
             }
 
-            // As alterações já foram aplicadas ao objeto 'task' devido ao TwoWay binding (implícito para TextBox/DatePicker).
-            this.DialogResult = true; // Indica que as alterações devem ser salvas
+            if (CompletionDatePickerEdit.SelectedDate.HasValue)
+            {
+                DateTime selectedDate = CompletionDatePickerEdit.SelectedDate.Value;
+                int hour = 0;
+                int minute = 0;
+
+                bool timeEntered = !string.IsNullOrWhiteSpace(HourTextBoxEdit.Text) || !string.IsNullOrWhiteSpace(MinuteTextBoxEdit.Text);
+                bool hourValid = int.TryParse(HourTextBoxEdit.Text, out hour) && hour >= 0 && hour <= 23;
+                bool minuteValid = int.TryParse(MinuteTextBoxEdit.Text, out minute) && minute >= 0 && minute <= 59;
+
+                if (timeEntered)
+                {
+                    if (hourValid && minuteValid)
+                    {
+                        taskToSave.CompletionDate = new DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, hour, minute, 0);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Hora ou minuto inválido. Por favor, use HH (0-23) e mm (0-59).\nA hora não será salva com esta data.", "Hora Inválida", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        taskToSave.CompletionDate = selectedDate.Date;
+                    }
+                }
+                else
+                {
+                    taskToSave.CompletionDate = selectedDate.Date;
+                }
+            }
+            else
+            {
+                taskToSave.CompletionDate = null;
+            }
+
+            this.DialogResult = true;
             this.Close();
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = false; // Indica que as alterações devem ser descartadas
+            this.DialogResult = false;
             this.Close();
         }
     }

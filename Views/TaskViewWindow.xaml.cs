@@ -32,6 +32,8 @@ public partial class TaskViewWindow : Window
         TitleTextBox.Clear();
         DescriptionTextBox.Clear();
         CompletionDatePicker.SelectedDate = null;
+        NewTaskHourTextBox.Text = "00"; // Limpa/reseta campo de hora
+        NewTaskMinuteTextBox.Text = "00"; // Limpa/reseta campo de minuto
     }
 
     private void ShowNewTaskFormButton_Click(object sender, RoutedEventArgs e)
@@ -52,7 +54,24 @@ public partial class TaskViewWindow : Window
     {
         string title = TitleTextBox.Text.Trim();
         string description = DescriptionTextBox.Text.Trim();
-        DateTime? completionDate = CompletionDatePicker.SelectedDate;
+        DateTime? completionDate = null;
+        if (CompletionDatePicker.SelectedDate.HasValue)
+        {
+            DateTime selectedDate = CompletionDatePicker.SelectedDate.Value;
+            int hour = 0;
+            int minute = 0;
+
+            // Tenta parsear, se falhar ou estiver vazio, usa 00:00
+            if (int.TryParse(NewTaskHourTextBox.Text, out int parsedHour) && parsedHour >= 0 && parsedHour <= 23)
+            {
+                hour = parsedHour;
+            }
+            if (int.TryParse(NewTaskMinuteTextBox.Text, out int parsedMinute) && parsedMinute >= 0 && parsedMinute <= 59)
+            {
+                minute = parsedMinute;
+            }
+            completionDate = new DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, hour, minute, 0);
+        }
 
         if (string.IsNullOrEmpty(title))
         {
