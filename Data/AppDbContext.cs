@@ -17,7 +17,7 @@ namespace TaskManager.Data
 
                 string exePath = AppDomain.CurrentDomain.BaseDirectory;
                 Directory.CreateDirectory(exePath);
-                string dbPath = Path.Combine(dataFolderPath, dbName);
+                string dbPath = Path.Combine(exePath, dbName);
                 optionsBuilder.UseSqlite($"Data Source={dbPath}");
             }
         }
