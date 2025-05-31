@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Models;
+using System;
+using System.IO;
 
 namespace TaskManager.Data
 {
@@ -9,7 +11,15 @@ namespace TaskManager.Data
         public DbSet<User> Users { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source = tasks.db");
+            if (!optionsBuilder.IsConfigured)
+            {
+                string dbName = "tasks.db";
+
+                string exePath = AppDomain.CurrentDomain.BaseDirectory;
+                Directory.CreateDirectory(exePath);
+                string dbPath = Path.Combine(dataFolderPath, dbName);
+                optionsBuilder.UseSqlite($"Data Source={dbPath}");
+            }
         }
 
         public static void EnsureDbCreated()

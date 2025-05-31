@@ -1,37 +1,48 @@
 using System.Windows;
-using TaskManager.Models; // Ou o namespace correto para UserTask
+using TaskManager.Models;
 
-namespace TaskManager.Views // Ou o namespace correto
+namespace TaskManager.Views
 {
     public partial class EditTaskWindow : Window
     {
-        // Não precisa de uma propriedade para a tarefa aqui se o DataContext for a própria tarefa.
-        // Se precisar fazer cópia ou lógica mais complexa, aí sim.
-
         public EditTaskWindow(UserTask taskToEdit)
         {
             InitializeComponent();
             this.DataContext = taskToEdit;
-
             UserTask task = (UserTask)this.DataContext;
+
             if (task.CompletionDate.HasValue)
             {
+                EnableCompletionDateCheckBox.IsChecked = true;
                 CompletionDatePickerEdit.SelectedDate = task.CompletionDate.Value.Date;
-                HourTextBoxEdit.Text = task.CompletionDate.Value.Hour.ToString("D2"); // Formato "00"
-                MinuteTextBoxEdit.Text = task.CompletionDate.Value.Minute.ToString("D2"); // Formato "00"
+                SpecifyTimeCheckBoxEdit.IsChecked = task.HasCompletionTime;
+
+                if (task.HasCompletionTime)
+                {
+                    HourTextBoxEdit.Text = task.CompletionDate.Value.Hour.ToString("D2");
+                    MinuteTextBoxEdit.Text = task.CompletionDate.Value.Minute.ToString("D2");
+                }
+                else
+                {
+                    HourTextBoxEdit.Text = "00";
+                    MinuteTextBoxEdit.Text = "00";
+                }
             }
             else
             {
-                HourTextBoxEdit.Text = "00"; // Valor padrão opcional
-                MinuteTextBoxEdit.Text = "00"; // Valor padrão opcional
+                EnableCompletionDateCheckBox.IsChecked = false;
+                SpecifyTimeCheckBoxEdit.IsChecked = false;
+                CompletionDatePickerEdit.SelectedDate = null;
+                HourTextBoxEdit.Text = "00";
+                MinuteTextBoxEdit.Text = "00";
             }
         }
 
+        // Salva as alterações feitas na tarefa, caso ocorra.
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             UserTask taskToSave = (UserTask)this.DataContext;
 
-            // Validação básica (Título é obrigatório)
             if (string.IsNullOrWhiteSpace(taskToSave.Title))
             {
                 MessageBox.Show("O título da tarefa é obrigatório.", "Validação", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -39,46 +50,68 @@ namespace TaskManager.Views // Ou o namespace correto
                 return;
             }
 
-            if (CompletionDatePickerEdit.SelectedDate.HasValue)
+            taskToSave.HasCompletionTime = SpecifyTimeCheckBoxEdit.IsChecked == true;
+
+            if (EnableCompletionDateCheckBox.IsChecked == true)
             {
-                DateTime selectedDate = CompletionDatePickerEdit.SelectedDate.Value;
-                int hour = 0;
-                int minute = 0;
+                taskToSave.HasCompletionTime = SpecifyTimeCheckBoxEdit.IsChecked == true;
 
-                bool timeEntered = !string.IsNullOrWhiteSpace(HourTextBoxEdit.Text) || !string.IsNullOrWhiteSpace(MinuteTextBoxEdit.Text);
-                bool hourValid = int.TryParse(HourTextBoxEdit.Text, out hour) && hour >= 0 && hour <= 23;
-                bool minuteValid = int.TryParse(MinuteTextBoxEdit.Text, out minute) && minute >= 0 && minute <= 59;
-
-                if (timeEntered)
+                if (CompletionDatePickerEdit.SelectedDate.HasValue)
                 {
-                    if (hourValid && minuteValid)
+                    DateTime selectedDateOnly = CompletionDatePickerEdit.SelectedDate.Value.Date;
+                    if (taskToSave.HasCompletionTime) 
                     {
-                        taskToSave.CompletionDate = new DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, hour, minute, 0);
+                        int hour = 0; int minute = 0;
+                        bool hourValid = int.TryParse(HourTextBoxEdit.Text, out hour) && hour >= 0 && hour <= 23;
+                        bool minuteValid = int.TryParse(MinuteTextBoxEdit.Text, out minute) && minute >= 0 && minute <= 59;
+
+                        if (hourValid && minuteValid)
+                        {
+                            taskToSave.CompletionDate = new DateTime(selectedDateOnly.Year, selectedDateOnly.Month, selectedDateOnly.Day, hour, minute, 0);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Hora ou minuto inválido. Apenas a data será salva (sem hora específica).", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            taskToSave.CompletionDate = selectedDateOnly;
+                            taskToSave.HasCompletionTime = false; // Corrige o flag pois a hora específica falhou
+                        }
                     }
                     else
                     {
-                        MessageBox.Show("Hora ou minuto inválido. Por favor, use HH (0-23) e mm (0-59).\nA hora não será salva com esta data.", "Hora Inválida", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        taskToSave.CompletionDate = selectedDate.Date;
+                        taskToSave.CompletionDate = selectedDateOnly;
                     }
                 }
                 else
                 {
-                    taskToSave.CompletionDate = selectedDate.Date;
+                    taskToSave.CompletionDate = null;
+                    taskToSave.HasCompletionTime = false;
                 }
             }
             else
             {
                 taskToSave.CompletionDate = null;
+                taskToSave.HasCompletionTime = false;
             }
 
             this.DialogResult = true;
             this.Close();
         }
 
+        // Cancela as alterações.
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;
             this.Close();
+        }
+
+        // Limpa as informações de hora e data da tarefa.
+        private void ClearCompletionDateButton_Click(object sender, RoutedEventArgs e)
+        {
+            EnableCompletionDateCheckBox.IsChecked = false;
+            CompletionDatePickerEdit.SelectedDate = null;
+            SpecifyTimeCheckBoxEdit.IsChecked = false;
+            HourTextBoxEdit.Text = "00";
+            MinuteTextBoxEdit.Text = "00";
         }
     }
 }

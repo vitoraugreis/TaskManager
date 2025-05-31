@@ -27,15 +27,7 @@ public partial class TaskViewWindow : Window
         DataContext = _viewModel;
     }
 
-    private void ClearNewTaskForm()
-    {
-        TitleTextBox.Clear();
-        DescriptionTextBox.Clear();
-        CompletionDatePicker.SelectedDate = null;
-        NewTaskHourTextBox.Text = "00"; // Limpa/reseta campo de hora
-        NewTaskMinuteTextBox.Text = "00"; // Limpa/reseta campo de minuto
-    }
-
+    // Expande o formulário para a adição de uma nova tarefa.
     private void ShowNewTaskFormButton_Click(object sender, RoutedEventArgs e)
     {
         if (NewTaskFormPanel.Visibility == Visibility.Collapsed)
@@ -50,27 +42,41 @@ public partial class TaskViewWindow : Window
         }
     }
 
+    // Salva a nova tarefa com o clique do usuário ( verificações são feitas ).
     private void AddTaskButton_Click(object sender, RoutedEventArgs e)
     {
         string title = TitleTextBox.Text.Trim();
         string description = DescriptionTextBox.Text.Trim();
         DateTime? completionDate = null;
-        if (CompletionDatePicker.SelectedDate.HasValue)
-        {
-            DateTime selectedDate = CompletionDatePicker.SelectedDate.Value;
-            int hour = 0;
-            int minute = 0;
+        bool hasCompletionTime = false;
 
-            // Tenta parsear, se falhar ou estiver vazio, usa 00:00
-            if (int.TryParse(NewTaskHourTextBox.Text, out int parsedHour) && parsedHour >= 0 && parsedHour <= 23)
+        if (EnableCompletionDateCheckBox.IsChecked == true)
+        {
+            hasCompletionTime = SpecifyTimeCheckBoxAddTask.IsChecked == true;
+            if (CompletionDatePicker.SelectedDate.HasValue)
             {
-                hour = parsedHour;
+                DateTime selectedDateOnly = CompletionDatePicker.SelectedDate.Value.Date;
+                if (hasCompletionTime)
+                {
+                    int hour = 0; int minute = 0;
+                    bool hourValid = int.TryParse(NewTaskHourTextBox.Text, out hour) && hour >= 0 && hour <= 23;
+                    bool minuteValid = int.TryParse(NewTaskMinuteTextBox.Text, out minute) && minute >= 0 && minute <= 59;
+                    if (hourValid && minuteValid)
+                    {
+                        completionDate = new DateTime(selectedDateOnly.Year, selectedDateOnly.Month, selectedDateOnly.Day, hour, minute, 0);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Hora ou minuto inválido. Apenas a data será salva (sem hora específica).", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        completionDate = selectedDateOnly;
+                        hasCompletionTime = false;
+                    }
+                }
+                else
+                {
+                    completionDate = selectedDateOnly;
+                }
             }
-            if (int.TryParse(NewTaskMinuteTextBox.Text, out int parsedMinute) && parsedMinute >= 0 && parsedMinute <= 59)
-            {
-                minute = parsedMinute;
-            }
-            completionDate = new DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, hour, minute, 0);
         }
 
         if (string.IsNullOrEmpty(title))
@@ -80,18 +86,42 @@ public partial class TaskViewWindow : Window
             return;
         }
 
-        _viewModel.AddTask(title, string.IsNullOrWhiteSpace(description) ? null : description, completionDate);
+        _viewModel.AddTask(title, description, completionDate, hasCompletionTime);
 
         ClearNewTaskForm();
         NewTaskFormPanel.Visibility = Visibility.Collapsed;
     }
 
+    // Limpa as informações da data e horário da tarefa.
+    private void ClearCompletionDateButton_Click(object sender, RoutedEventArgs e)
+    {
+        EnableCompletionDateCheckBox.IsChecked = false;
+        CompletionDatePicker.SelectedDate = null;
+        SpecifyTimeCheckBoxAddTask.IsChecked = false;
+        NewTaskHourTextBox.Text = "00";
+        NewTaskMinuteTextBox.Text = "00";
+    }
+
+    // Cancela a criação de tarefa.
     private void CancelAddTaskButton_Click(object sender, RoutedEventArgs e)
     {
         ClearNewTaskForm();
         NewTaskFormPanel.Visibility = Visibility.Collapsed;
     }
 
+    // Limpa o formulário de criação de tarefa.
+    private void ClearNewTaskForm()
+    {
+        TitleTextBox.Clear();
+        DescriptionTextBox.Clear();
+        EnableCompletionDateCheckBox.IsChecked = false;
+        CompletionDatePicker.SelectedDate = null;
+        SpecifyTimeCheckBoxAddTask.IsChecked = false;
+        NewTaskHourTextBox.Text = "00";
+        NewTaskMinuteTextBox.Text = "00";
+    }
+
+    // Mostra as opções que podem ser feitas com a tarefa.
     private void TaskOptionsButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is Button button)
@@ -104,6 +134,7 @@ public partial class TaskViewWindow : Window
         }
     }
 
+    // Remove a tarefa específica.
     private void RemoveTaskMenu_Click(object sender, RoutedEventArgs e)
     {
         if (sender is MenuItem menuItem)
@@ -111,9 +142,7 @@ public partial class TaskViewWindow : Window
             UserTask? taskToRemove = menuItem.DataContext as UserTask;
 
             if (taskToRemove == null && menuItem.Parent is ContextMenu contextMenu && contextMenu.PlacementTarget is FrameworkElement placementTarget)
-            {
                 taskToRemove = placementTarget.DataContext as UserTask;
-            }
 
             if (taskToRemove != null)
             {
@@ -124,9 +153,7 @@ public partial class TaskViewWindow : Window
                     MessageBoxImage.Warning);
 
                 if (confirmation == MessageBoxResult.Yes)
-                {
                     _viewModel.RemoveTask(taskToRemove);
-                }
             }
             else
             {
@@ -135,6 +162,7 @@ public partial class TaskViewWindow : Window
         }
     }
 
+    // Vai para o processo de edição da tarefa.
     private void EditTaskMenu_Click(object sender, RoutedEventArgs e)
     {
         UserTask? originalTask = null;
@@ -150,7 +178,7 @@ public partial class TaskViewWindow : Window
             UserTask taskClone = new UserTask(originalTask);
 
             EditTaskWindow editWindow = new EditTaskWindow(taskClone);
-            editWindow.Owner = this; // Define a janela principal como "dona" da dialog
+            editWindow.Owner = this;
 
             bool? dialogResult = editWindow.ShowDialog();
 
@@ -160,6 +188,7 @@ public partial class TaskViewWindow : Window
                 originalTask.Title = taskClone.Title;
                 originalTask.Description = taskClone.Description;
                 originalTask.CompletionDate = taskClone.CompletionDate;
+                originalTask.HasCompletionTime = taskClone.HasCompletionTime;
                 _viewModel.UpdateTask(originalTask);
             }
         }

@@ -12,7 +12,10 @@ namespace TaskManager.Models
 
         public ICollection<UserTask> Tasks { get; set; } = new List<UserTask>();
 
-        public User() { }
+        public User() { 
+            Username = String.Empty;
+        }
+
         public User(string username)
         {
             Username = username;

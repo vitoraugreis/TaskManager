@@ -27,11 +27,11 @@ namespace TaskManager.ViewModels
             Tasks = new ObservableCollection<UserTask>(userTasks);
         }
 
-        public void AddTask(string title, string? description = null, DateTime? completionDate = null)
+        public void AddTask(string title, string? description = null, DateTime? completionDate = null, bool hasCompletionTime = false)
         {
             using var context = new AppDbContext();
             var user = context.Users.First(u => u.Id == CurrentUser.Id);
-            var newTask = new UserTask(user, title, description, completionDate);
+            var newTask = new UserTask(user, title, description, completionDate, hasCompletionTime);
 
             context.Tasks.Add(newTask);
             context.SaveChanges();
@@ -61,17 +61,9 @@ namespace TaskManager.ViewModels
         public void UpdateTask(UserTask updatedTask)
         {
             if (updatedTask == null) return;
-
             using var context = new AppDbContext();
-                // var existingTask = _dbContext.UserTasks.Find(updatedTask.Id);
-                // if (existingTask != null) {
-                //     _dbContext.Entry(existingTask).CurrentValues.SetValues(updatedTask);
-                // } else {
-                //    _dbContext.UserTasks.Update(updatedTask); // Ou _dbContext.Entry(updatedTask).State = EntityState.Modified;
-                // }
-                // Se 'updatedTask' é a mesma instância que está no DbContext e foi modificada pela UI,
-                // apenas SaveChanges() é necessário.
 
+            // Como updatedTask é a mesma instância que está no context, apenas SaveChanges é necessário.
             context.SaveChanges();
         }
     }

@@ -23,15 +23,14 @@
                 Margin="0,0,0,10"/>
 
 		<Border x:Name="NewTaskFormPanel"
-                Grid.Row="1"
-                Visibility="Collapsed" BorderBrush="#FFCCCCCC"
-                BorderThickness="1"
-                Background="#FFF6F6F6"
-                Padding="10"
-                Margin="0,0,0,10">
+        Grid.Row="1"
+        Visibility="Collapsed" BorderBrush="#FFCCCCCC"
+        BorderThickness="1"
+        Background="#FFF6F6F6"
+        Padding="15" Margin="0,0,0,10">
 			<Grid>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto" MinWidth="80"/>
 					<ColumnDefinition Width="*"/>
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
@@ -39,27 +38,50 @@
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 
 				<TextBlock Text="Título:" Grid.Row="0" Grid.Column="0" Margin="0,0,10,5" VerticalAlignment="Center"/>
-				<TextBox x:Name="TitleTextBox" Grid.Row="0" Grid.Column="1" Margin="0,0,0,5" />
+				<TextBox x:Name="TitleTextBox" Grid.Row="0" Grid.Column="1" Margin="0,5,0,5" VerticalContentAlignment="Center" Padding="5,3"/>
 
-				<TextBlock Text="Descrição:" Grid.Row="1" Grid.Column="0" Margin="0,0,10,5" VerticalAlignment="Center"/>
-				<TextBox x:Name="DescriptionTextBox" Grid.Row="1" Grid.Column="1" Margin="0,0,0,5" AcceptsReturn="True" Height="60" TextWrapping="Wrap"/>
+				<TextBlock Text="Descrição:" Grid.Row="1" Grid.Column="0" Margin="0,0,10,5" VerticalAlignment="Top" Padding="0,5,0,0"/>
+				<TextBox x:Name="DescriptionTextBox" Grid.Row="1" Grid.Column="1" Margin="0,5,0,5" AcceptsReturn="True" Height="60" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Padding="5,3"/>
 
-				<TextBlock Text="Concluir até:" Grid.Row="2" Grid.Column="0" Margin="0,0,10,5" VerticalAlignment="Center"/>
-				<StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="0,5,0,5" VerticalAlignment="Center">
-					<DatePicker x:Name="CompletionDatePicker" Width="140"/>
-					<TextBlock Text=" às " VerticalAlignment="Center" Margin="8,0,2,0"/>
-					<TextBox x:Name="NewTaskHourTextBox" Width="30" MaxLength="2" HorizontalContentAlignment="Center" Text="00"/>
-					<TextBlock Text=":" VerticalAlignment="Center" Margin="2,0,2,0"/>
-					<TextBox x:Name="NewTaskMinuteTextBox" Width="30" MaxLength="2" HorizontalContentAlignment="Center" Text="00"/>
-					<TextBlock Text=" (HH:mm)" FontSize="10" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="Gray"/>
+				<CheckBox x:Name="EnableCompletionDateCheckBox" Content="Definir Data de Conclusão"
+						  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,5" VerticalAlignment="Center"/>
+
+				<StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,10"
+							IsEnabled="{Binding ElementName=EnableCompletionDateCheckBox, Path=IsChecked}">
+
+					<Grid Margin="0,0,0,5">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" MinWidth="80"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Text="Data:" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,0"/>
+						<DatePicker x:Name="CompletionDatePicker" Grid.Column="1" HorizontalAlignment="Left" Width="160" VerticalContentAlignment="Center"/>
+					</Grid>
+
+					<CheckBox x:Name="SpecifyTimeCheckBoxAddTask" Content="Especificar Hora" Margin="0,5,0,5" VerticalAlignment="Center"/>
+
+					<StackPanel Orientation="Horizontal" Margin="0,0,0,5"
+								IsEnabled="{Binding ElementName=SpecifyTimeCheckBoxAddTask, Path=IsChecked}">
+						<TextBlock Text="Hora:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+						<TextBox x:Name="NewTaskHourTextBox" Width="35" MaxLength="2" HorizontalContentAlignment="Center" Text="00" Margin="0,0,2,0" VerticalContentAlignment="Center" Padding="5,3"/>
+						<TextBlock Text=":" VerticalAlignment="Center" />
+						<TextBox x:Name="NewTaskMinuteTextBox" Width="35" MaxLength="2" HorizontalContentAlignment="Center" Text="00" Margin="2,0,0,0" VerticalContentAlignment="Center" Padding="5,3"/>
+						<TextBlock Text="(HH:mm)" FontSize="10" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="Gray"/>
+					</StackPanel>
+
+					<Button x:Name="ClearCompletionDateButton" Content="Limpar Data/Hora" Click="ClearCompletionDateButton_Click"
+							HorizontalAlignment="Left" Padding="8,3" Margin="0,5,0,0" FontSize="11"/>
 				</StackPanel>
 
-				<StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-					<Button x:Name="AddTaskButton" Content="Adicionar Tarefa" Click="AddTaskButton_Click" Margin="0,0,10,0" Padding="10,4"/>
-					<Button x:Name="CancelAddTaskButton" Content="Cancelar" Click="CancelAddTaskButton_Click" Padding="10,4"/>
+				<StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+					<Button x:Name="AddTaskButton" Content="Adicionar Tarefa" Click="AddTaskButton_Click"
+							MinWidth="120" Padding="10,5" Margin="0,0,10,0"/>
+					<Button x:Name="CancelAddTaskButton" Content="Cancelar" Click="CancelAddTaskButton_Click"
+							MinWidth="100" Padding="10,5"/>
 				</StackPanel>
 			</Grid>
 		</Border>
@@ -82,8 +104,18 @@
 								<TextBlock Text="{Binding Title}" FontWeight="Bold"/>
 								<TextBlock Text="{Binding Description}"
 											 FontStyle="Italic" Foreground="Gray" FontSize="12" TextWrapping="Wrap" MaxWidth="600"/>
-								<TextBlock Text="{Binding CompletionDate, StringFormat='Concluir até: {0:dd/MM/yyyy HH:mm}'}"
-										   FontSize="12"/>
+								<TextBlock Text="{Binding CompletionDateDisplay}" FontSize="12">
+									<TextBlock.Style>
+										<Style TargetType="TextBlock">
+											<Setter Property="Visibility" Value="Visible"/>
+											<Style.Triggers>
+												<DataTrigger Binding="{Binding CompletionDate}" Value="{x:Null}">
+													<Setter Property="Visibility" Value="Collapsed"/>
+												</DataTrigger>
+											</Style.Triggers>
+										</Style>
+									</TextBlock.Style>
+								</TextBlock>
 							</StackPanel>
 						</StackPanel>
 
